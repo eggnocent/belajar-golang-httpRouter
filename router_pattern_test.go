@@ -34,3 +34,26 @@ func TestRouterPatternNameParameter(t *testing.T) {
 	// Pastikan respons sesuai dengan yang diharapkan
 	assert.Equal(t, "product 1 Item 1", string(body))
 }
+
+func TestRouterPatternCatchAllParams(t *testing.T) {
+	router := httprouter.New()
+	router.GET("/images/*image", func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
+		image := p.ByName("image")
+		text := "images " + image
+		fmt.Fprint(w, text)
+	})
+
+	// Buat permintaan baru
+	request := httptest.NewRequest("GET", "http://localhost:3000/images/small/profile.png", nil)
+	recorder := httptest.NewRecorder()
+
+	// Panggil ServeHTTP dengan request yang benar
+	router.ServeHTTP(recorder, request)
+
+	// Baca body dari recorder
+	response := recorder.Result()
+	body, _ := io.ReadAll(response.Body)
+
+	// Pastikan respons sesuai dengan yang diharapkan
+	assert.Equal(t, "images /small/profile.png", string(body))
+}
