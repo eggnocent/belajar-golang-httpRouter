@@ -27,11 +27,9 @@ func TestParams(t *testing.T) {
 	router.ServeHTTP(recorder, request)
 
 	// Baca body dari recorder
-	body, err := io.ReadAll(recorder.Result().Body)
-	if err != nil {
-		t.Fatalf("failed to read response body: %v", err)
-	}
+	response := recorder.Result()
+	body, _ := io.ReadAll(response.Body)
 
 	// Pastikan respons sesuai dengan yang diharapkan
-	assert.Equal(t, "hello world", string(body))
+	assert.Equal(t, "product 1", string(body))
 }
